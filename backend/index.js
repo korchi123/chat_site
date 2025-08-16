@@ -17,9 +17,10 @@ const __dirname = dirname(__filename);
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    credentials: true,
-    origin: process.env.CLIENT_URL
-}))
+  origin: 'https://chat-site-frontend.onrender.com',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api', router)
