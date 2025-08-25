@@ -25,6 +25,13 @@ app.use(cors({
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api', router)
+// ✅ ДОБАВЬТЕ ЭТО: Обслуживание статических файлов из build
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+// ✅ ДОБАВЬТЕ ЭТО: Обработка всех GET запросов для SPA
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
 app.use(ErrorHandlingMiddleware)
 app.get('/',(req,res)=>{
     res.status(200).json({message:"working"})
