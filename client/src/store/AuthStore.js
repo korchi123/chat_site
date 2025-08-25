@@ -86,7 +86,7 @@ export default class AuthStore {
     }
     async checkAuth (){
         try {
-            const response = await $authHost.get('/user/refresh');
+            const response = await $host.get('/user/refresh');
             localStorage.setItem('accessToken', response.data.accessToken);
             this.isAuth = true;
             this.user = response.data.user;

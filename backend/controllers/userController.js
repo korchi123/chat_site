@@ -13,7 +13,7 @@
     const userData=await UserService.registration(email, password, nickname)
     res.cookie('refreshToken', userData.refreshToken, {maxAge:30*24*60*60*1000, httpOnly:true, sameSite: 'none',
   secure: true,  // Обязательно для HTTPS
-  domain: '.onrender.com'  // Укажите правильный domain
+  domain: 'chat-site-qmju.onrender.com'  // Укажите правильный domain
   })
     return res.json(userData)
         } 
@@ -38,7 +38,7 @@
         const userData=await UserService.login(email, password);
         res.cookie('refreshToken', userData.refreshToken, {maxAge:30*24*60*60*1000, httpOnly:true, sameSite: 'none',
   secure: true,  // Обязательно для HTTPS
-  domain: '.onrender.com'  // Укажите правильный domain
+  domain: 'chat-site-qmju.onrender.com'  // Укажите правильный domain
   }) 
     return res.json(userData)
             
@@ -64,7 +64,7 @@
          const userData=await UserService.refresh(refreshToken);
         res.cookie('refreshToken', userData.refreshToken, {maxAge:30*24*60*60*1000, httpOnly:true, sameSite: 'none',
   secure: true,  // Обязательно для HTTPS
-  domain: '.onrender.com'  // Укажите правильный domain
+  domain: 'chat-site-qmju.onrender.com'  // Укажите правильный domain
   }) 
     return res.json(userData)
             
