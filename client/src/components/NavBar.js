@@ -75,8 +75,8 @@ const NavBar = observer(() => {
                                 </>
                             ) : (
                                 <>
-                                    <Nav.Link href={Registration_Route}>Зарегистрироваться</Nav.Link>
-                                    <Nav.Link href={Login_Route}>Войти</Nav.Link>
+                                    <Nav.Link onClick={() => navigate(Registration_Route)}>Зарегистрироваться</Nav.Link>
+                                    <Nav.Link onClick={() => navigate(Login_Route)}>Войти</Nav.Link>
                                 </>
                             )}
                         </Nav>
