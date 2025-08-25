@@ -24,18 +24,23 @@ app.use(cors({
 }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.use('/api', router)
-// ✅ ДОБАВЬТЕ ЭТО: Обслуживание статических файлов из build
+// ✅ 1. Сначала API маршруты
+app.use('/api', router);
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ message: "working" });
+});
+
+// ✅ 2. Потом статические файлы
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-// ✅ ДОБАВЬТЕ ЭТО: Обработка всех GET запросов для SPA
+// ✅ 3. middleware обработки ошибок ДО catch-all маршрута
+app.use(ErrorHandlingMiddleware);
+
+// ✅ 4. И ТОЛЬКО ПОТОМ catch-all маршрут (самый последний!)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
-app.use(ErrorHandlingMiddleware)
-app.get('/',(req,res)=>{
-    res.status(200).json({message:"working"})
-})
 
 const start = async ()=>{
     try{
