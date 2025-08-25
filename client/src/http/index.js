@@ -30,9 +30,7 @@ $authHost.interceptors.response.use(
       
       try {
         // Пытаемся обновить токены
-        const response = await $host.get(`${API_URL}/user/refresh`, {
-          withCredentials: true
-        });
+        const response = await $host.get(`/user/refresh`);
         
         // Сохраняем новый access token
         localStorage.setItem('accessToken', response.data.accessToken);
