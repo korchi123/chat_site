@@ -1,0 +1,68 @@
+.profile-container {
+    max-width: 1000px;
+    margin: 5% auto;
+    padding: 20px;
+    width: 90%;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    display: flex;
+    gap: 30px;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 30%;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 20px;
+    width: 70%;
+}
+
+.profile-image {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.profile-button {
+    width: 200px;
+}
+
+.bio-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.bio-label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.bio-input {
+    flex: 1;
+    min-height: 200px;
+}
+
+.save-button-container {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 1rem 1rem;
+}
+
+.bio-card {
+    flex: 1;
+}
+
+.card-body {
+    padding: 1rem;
+}
