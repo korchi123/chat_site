@@ -31,16 +31,21 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ message: "working" });
 });
 
-// ✅ Потом статические файлы (УБЕРИTE временно build)
-app.use(express.static(path.join(__dirname, 'public')));
+// ✅ Добавьте проверку существования build папки
+const buildPath = path.join(__dirname, '../client/build');
 
-// ✅ middleware обработки ошибок
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath));
+  
+  // ✅ Обработка всех GET запросов для SPA
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(buildPath, 'index.html'));
+  });
+} else {
+  console.log('Build folder not found, serving API only');
+}
 app.use(ErrorHandlingMiddleware);
 
-// ❌ ВРЕМЕННО УБЕРИТЕ catch-all маршрут чтобы найти проблему
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-// });
 
 const start = async ()=>{
     try{
