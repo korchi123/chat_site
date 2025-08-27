@@ -2,12 +2,12 @@ import ApiError from '../error/ApiError.js';
 import { models } from '../config/db.js';
 import { promises as fs } from 'fs'; 
 import path from 'path';
-import { fileURLToPath } from 'url';
+
 import YandexDiskService from './YandexDiskService.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const UPLOADS_DIR = path.join(__dirname, '../uploads');
+
+
+
 const { Profile, User } = models;
 
 class ProfileService {
