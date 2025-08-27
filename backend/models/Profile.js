@@ -13,7 +13,7 @@ export default (sequelize) => {
       allowNull: true
     },
     photoFileId: { // Новое поле для хранения ID файла на Google Drive
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       defaultValue: null,
       allowNull: true
     },

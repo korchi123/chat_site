@@ -8,7 +8,7 @@ import ErrorHandlingMiddleware from './middleware.js/ErrorHandlingMiddleware.js'
 import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import addPhotoFileIdColumn from './add-photoFileId-column.js';
+import changePhotoToText from './change-photo-to-text.js';
 const app = express();
 const PORT=process.env.PORT || 5000
 // Получаем текущий путь к файлу
@@ -34,11 +34,13 @@ app.get('/',(req,res)=>{
 const start = async ()=>{
     try{
         console.log('Checking database structure...');
-    const columnAdded = await addPhotoFileIdColumn();
-    
-    if (!columnAdded) {
-      console.warn('Column addition completed with warnings');
-    }
+    const typeChanged = await changePhotoToText();
+        // ИЛИ пересоздаем колонку
+        // const columnRecreated = await recreatePhotoColumn();
+        
+        if (!typeChanged) {
+            console.warn('Column type change completed with warnings');
+        }
 await DB.authenticate()
     console.log('Connection to DB established');
   
