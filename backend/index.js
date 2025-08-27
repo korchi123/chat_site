@@ -8,7 +8,6 @@ import ErrorHandlingMiddleware from './middleware.js/ErrorHandlingMiddleware.js'
 import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-//import fs from 'fs'
 const app = express();
 const PORT=process.env.PORT || 5000
 // Получаем текущий путь к файлу
@@ -18,28 +17,18 @@ const __dirname = dirname(__filename);
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-  origin: 'https://chat-site-frontend.onrender.com',
-  //origin:"http://localhost:3000",
+  //origin: 'https://chat-site-frontend.onrender.com',
+  origin:"http://localhost:3000",
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
 }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ✅ Сначала API маршруты
-app.use('/api', router);
-
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ message: "working" });
-});
-
-
-app.use(express.static(path.join(__dirname, '../client/build')));
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-});
-app.use(ErrorHandlingMiddleware);
-
+app.use('/api', router)
+app.use(ErrorHandlingMiddleware)
+app.get('/',(req,res)=>{
+    res.status(200).json({message:"working"})
+})
 
 const start = async ()=>{
     try{
