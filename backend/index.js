@@ -32,6 +32,12 @@ app.get('/',(req,res)=>{
 
 const start = async ()=>{
     try{
+        console.log('Checking database structure...');
+    const columnAdded = await addPhotoFileIdColumn();
+    
+    if (!columnAdded) {
+      console.warn('Column addition completed with warnings');
+    }
 await DB.authenticate()
     console.log('Connection to DB established');
   
