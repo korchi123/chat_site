@@ -8,7 +8,12 @@ export default (sequelize) => {
       autoIncrement: true
     },
     photo: {
-      type: DataTypes.STRING, // Путь к файлу или base64
+      type: DataTypes.TEXT, // Путь к файлу или base64
+      defaultValue: null,
+      allowNull: true
+    },
+    photoFileId: { // Новое поле для хранения ID файла на Google Drive
+      type: DataTypes.STRING,
       defaultValue: null,
       allowNull: true
     },

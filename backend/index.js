@@ -8,7 +8,7 @@ import ErrorHandlingMiddleware from './middleware.js/ErrorHandlingMiddleware.js'
 import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs'
+//import fs from 'fs'
 const app = express();
 const PORT=process.env.PORT || 5000
 // Получаем текущий путь к файлу
@@ -35,11 +35,11 @@ app.get('/api/health', (req, res) => {
 
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
 app.use(ErrorHandlingMiddleware);
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-// });
+
 
 const start = async ()=>{
     try{

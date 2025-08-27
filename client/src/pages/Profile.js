@@ -75,7 +75,7 @@ const Profile = observer(() => {
                             width={180}
                             height={180}
                             alt="Profile photo"
-                            src={profileStore.photo ? `${process.env.REACT_APP_API_URL}${profileStore.photo}` : base_photo}
+                            src={profileStore.photo ? profileStore.photo : base_photo}
                             style={{
                                 borderRadius: '50%',
                                 objectFit: 'cover',

@@ -3,6 +3,7 @@ import { models } from '../config/db.js';
 import { promises as fs } from 'fs'; 
 import path from 'path';
 import { fileURLToPath } from 'url';
+import YandexDiskService from './YandexDiskService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,7 +25,6 @@ class ProfileService {
             throw ApiError.BadRequest('Профиль не найден');
         }
 
-        // Явная проверка на undefined (null и '' будут обработаны)
         if (birthDate !== undefined) {
             profile.birthDate = birthDate === '' ? null : birthDate;
         }
@@ -32,11 +32,7 @@ class ProfileService {
         if (photo !== undefined) profile.photo = photo;
 
         await profile.save();
-        return {
-            birthDate: profile.birthDate,
-            bio: profile.bio,
-            photo: profile.photo
-        };
+        return profile;
     }
 
     async uploadPhoto(userId, file) {
@@ -44,64 +40,57 @@ class ProfileService {
             throw ApiError.BadRequest('Файл не загружен');
         }
 
-        // 1. Получаем текущий профиль
         const profile = await Profile.findOne({ where: { userId } });
         if (!profile) {
             throw ApiError.BadRequest('Профиль не найден');
         }
 
-        // 2. Удаляем старое фото (если есть)
+        // Удаляем старое фото (если есть)
         if (profile.photo) {
-            await this.deletePhotoFile(profile.photo);
+            await this.deletePhotoFromDisk(profile.photo);
         }
 
-        // 3. Генерация уникального имени файла
+        // Генерация уникального имени файла
         const uniqueFilename = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
-        const photoPath = `/uploads/${uniqueFilename}`;
-        const absolutePath = path.join(UPLOADS_DIR, uniqueFilename);
 
-        // 4. Создаем папку uploads если не существует
-        await fs.mkdir(UPLOADS_DIR, { recursive: true });
-        // 5. Перемещаем файл из временной папки в целевую
-        try {
-            await fs.rename(file.path, absolutePath);
-        } catch (error) {
-            console.error('Ошибка перемещения файла:', error);
-            throw ApiError.Internal('Ошибка сохранения файла');
-        }
+        // Загружаем файл на Яндекс.Диск
+        const diskResponse = await YandexDiskService.uploadFile(file, uniqueFilename);
 
-        // 6. Обновляем профиль с новым фото
-        const updatedProfile = await this.updateProfile(userId, { photo: photoPath });
+        // Обновляем профиль
+        const updatedProfile = await this.updateProfile(userId, {
+            photo: diskResponse.publicUrl
+        });
 
-        
+        // Удаляем временный файл
+        await fs.unlink(file.path).catch(console.error);
+
         return { 
-            photoUrl: photoPath,
+            photoUrl: updatedProfile.photo,
             birthDate: updatedProfile.birthDate,
             bio: updatedProfile.bio
         };
     }
-    async deletePhotoFile(photoPath) {
-    try {
-        const filename = path.basename(photoPath);
-        const absolutePath = path.join(UPLOADS_DIR, filename);
-        
+
+    async deletePhotoFromDisk(photoUrl) {
         try {
-            // Используем fs.promises API
-            await fs.access(absolutePath); // Проверяем доступ к файлу
-            await fs.unlink(absolutePath);
-            console.log(`Файл удален: ${absolutePath}`);
-        } catch (accessError) {
-            if (accessError.code === 'ENOENT') {
-                console.warn(`Файл не найден: ${absolutePath}`);
+            console.log('Attempting to delete photo from disk. URL:', photoUrl);
+            
+            // Извлекаем имя файла из URL
+            const fileName = YandexDiskService.extractFileNameFromUrl(photoUrl);
+            console.log('Extracted filename:', fileName);
+            
+            if (fileName) {
+                console.log('Calling deleteFile for:', fileName);
+                await YandexDiskService.deleteFile(fileName);
+                console.log('File deleted successfully');
             } else {
-                throw accessError;
+                console.warn('Could not extract filename from URL');
             }
+        } catch (error) {
+            // Игнорируем ошибки удаления, так как это не критично
+            console.warn('Error deleting photo from Yandex Disk (non-critical):', error.message);
         }
-    } catch (error) {
-        console.error('Ошибка при удалении файла:', error);
-        // Не прерываем выполнение, если не удалось удалить файл
     }
-}
 
     async deletePhoto(userId) {
         const profile = await Profile.findOne({ where: { userId } });
@@ -110,11 +99,13 @@ class ProfileService {
         }
 
         if (profile.photo) {
-            await this.deletePhotoFile(profile.photo);
+            await this.deletePhotoFromDisk(profile.photo);
         }
 
-        // Обновляем профиль, устанавливая photo в null
-        const updatedProfile = await this.updateProfile(userId, { photo: null });
+        // Обновляем профиль
+        const updatedProfile = await this.updateProfile(userId, {
+            photo: null
+        });
 
         return {
             photoUrl: null,
