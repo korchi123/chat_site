@@ -17,8 +17,8 @@ const __dirname = dirname(__filename);
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-  //origin: 'https://chat-site-frontend.onrender.com',
-  origin:"http://localhost:3000",
+  origin: 'https://chat-site-frontend.onrender.com',
+  //origin:"http://localhost:3000",
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
 }));
