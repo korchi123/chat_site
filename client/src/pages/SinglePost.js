@@ -122,7 +122,7 @@ const SinglePost = observer(() => {
       <Card.Title>{postStore.currentPost.topic}</Card.Title>
       <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
         <img
-          src={post.User.Profile?.photo ? profileStore.getProxiedImageUrl(post.User.Profile.photo) : base_photo}
+          src={postStore.currentPost.User.Profile?.photo ? profileStore.getProxiedImageUrl(postStore.currentPost.User.Profile.photo) : base_photo}
           alt="Аватар"
           width={25}
           height={25}
