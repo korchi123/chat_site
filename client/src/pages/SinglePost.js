@@ -122,7 +122,7 @@ const SinglePost = observer(() => {
       <Card.Title>{postStore.currentPost.topic}</Card.Title>
       <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
         <img
-          src={post.User.Profile?.photo ? profileStore.getProxiedImageUrl(post.User.Profile?.photo) : base_photo}
+          src={post.User.Profile?.photo ? profileStore.getProxiedImageUrl(post.User.Profile.photo) : base_photo}
           alt="Аватар"
           width={25}
           height={25}
@@ -181,7 +181,7 @@ const SinglePost = observer(() => {
               <div key={comment.id} className="mb-3 pb-3 border-bottom position-relative">
                 <div className="d-flex align-items-center">
                   <img
-                    src={comment.User.Profile?.photo ? profileStore.getProxiedImageUrl(comment.User.Profile?.photo) : base_photo}
+                    src={comment.User.Profile?.photo ? profileStore.getProxiedImageUrl(comment.User.Profile.photo) : base_photo}
                     alt="Аватар"
                     width={25}
                     height={25}
