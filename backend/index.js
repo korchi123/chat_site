@@ -34,13 +34,7 @@ app.get('/',(req,res)=>{
 const start = async ()=>{
     try{
         console.log('Checking database structure...');
-    const typeChanged = await changePhotoToText();
-        // ИЛИ пересоздаем колонку
-        // const columnRecreated = await recreatePhotoColumn();
-        
-        if (!typeChanged) {
-            console.warn('Column type change completed with warnings');
-        }
+    
 await DB.authenticate()
     console.log('Connection to DB established');
   

@@ -1,31 +1,39 @@
-// routes/image.js
-import express from 'express';
-import axios from 'axios';
-import { YANDEX_DISK_ACCESS_TOKEN } from '../config.js';
+import { Router } from "express";
+import fetch from 'node-fetch'; // Используем встроенный fetch вместо axios
 
-const router = express.Router();
+const router = new Router();
 
-router.get('/yandex-image', async (req, res) => {
-  try {
-    const { url } = req.query;
-    
-    if (!url) {
-      return res.status(400).json({ error: 'URL parameter is required' });
+// Прокси для изображений с Яндекс.Диска
+router.get('/yandex-proxy', async (req, res) => {
+    try {
+        const { imageUrl } = req.query;
+        
+        if (!imageUrl) {
+            return res.status(400).json({ error: 'imageUrl parameter is required' });
+        }
+
+        const decodedUrl = decodeURIComponent(imageUrl);
+        
+        const response = await fetch(decodedUrl, {
+            headers: {
+                'Authorization': `OAuth ${process.env.YANDEX_DISK_ACCESS_TOKEN}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Yandex response: ${response.status}`);
+        }
+
+        // Устанавливаем правильные заголовки
+        res.setHeader('Content-Type', response.headers.get('content-type'));
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+
+        // Передаем поток данных
+        response.body.pipe(res);
+    } catch (error) {
+        console.error('Error proxying image:', error);
+        res.status(500).json({ error: 'Failed to load image' });
     }
-
-    const response = await axios.get(url, {
-      headers: {
-        'Authorization': `OAuth ${YANDEX_DISK_ACCESS_TOKEN}`
-      },
-      responseType: 'stream'
-    });
-
-    res.setHeader('Content-Type', response.headers['content-type']);
-    response.data.pipe(res);
-  } catch (error) {
-    console.error('Error proxying image:', error);
-    res.status(500).json({ error: 'Failed to load image' });
-  }
 });
 
 export default router;

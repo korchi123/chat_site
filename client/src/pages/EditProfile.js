@@ -91,14 +91,18 @@ const EditProfile = observer(() => {
             setBirthDateError('Ошибка при сохранении даты');
         }
     };
-    const getProxiedImageUrl = (originalUrl) => {
-    if (!originalUrl) return base_photo;
+    const getProxiedImageUrl = async (originalUrl) => {
+    if (!originalUrl) return '';
     
-    // Кодируем URL для передачи в query параметре
+    // Если это уже прокси-ссылка или base64, возвращаем как есть
+    if (originalUrl.startsWith('data:') || originalUrl.includes('/api/images/')) {
+        return originalUrl;
+    }
+    
+    // Создаем прокси-ссылку через наш бэкенд
     const encodedUrl = encodeURIComponent(originalUrl);
     return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
-};
-
+}
     return (
         <Container>
             <div className="profile-container">
@@ -117,7 +121,7 @@ const EditProfile = observer(() => {
                             width={180}
                             height={180}
                             alt="Profile photo"
-                            src={getProxiedImageUrl(profileStore.photo)}
+                            src={profileStore.photo ? profileStore.getProxiedImageUrl(profileStore.photo) : base_photo}
                             className="profile-image"
                             onError={(e) => {
                                 e.target.src = base_photo;
