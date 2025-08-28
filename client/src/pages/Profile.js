@@ -75,7 +75,7 @@ const Profile = observer(() => {
                             width={180}
                             height={180}
                             alt="Profile photo"
-                            src={profileStore.photo ? profileStore.photo : base_photo}
+                            src={profileStore.photo ? profileStore.getProxiedImageUrl(profileStore.photo) : base_photo}
                             style={{
                                 borderRadius: '50%',
                                 objectFit: 'cover',

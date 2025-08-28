@@ -77,6 +77,22 @@ const Posts = observer(() => {
     e.stopPropagation();
     navigate(`${UserProfile_Route}/${userId}`);
   };
+  const getImageUrl = (photoUrl) => {
+    if (!photoUrl) return base_photo;
+    
+    // Используем метод из store или локальную реализацию
+    if (userStore && typeof userStore.getProxiedImageUrl === 'function') {
+      return userStore.getProxiedImageUrl(photoUrl);
+    }
+    
+    // Альтернативная реализация, если метод недоступен в store
+    if (photoUrl.startsWith('data:') || photoUrl.includes('/api/images/')) {
+      return photoUrl;
+    }
+    
+    const encodedUrl = encodeURIComponent(photoUrl);
+    return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
+  };
   // Условный рендеринг должен быть после всех хуков
   if (postStore.loading) {
     return (
@@ -120,7 +136,7 @@ const Posts = observer(() => {
                   <Card.Title>{post.topic}</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
                       <img
-                        src={post.User.Profile?.photo ? `${process.env.REACT_APP_API_URL}${post.User.Profile.photo}` : base_photo}
+                        src={getImageUrl(userPhoto)}
                         alt="Аватар"
                         width={25}
                         height={25}
