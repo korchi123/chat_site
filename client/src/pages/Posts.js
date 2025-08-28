@@ -112,7 +112,7 @@ const Posts = observer(() => {
           const isLiked = authStore.isAuth && 
             likeStore.postLikes.some(like => like.postId === post.id);
           const isLoading = loadingLikes[post.id];
-
+          const userPhoto = post.User.Profile?.photo;
           return (
             <Col md={6} lg={12} className="mb-4" key={post.id}>
               <Card>
@@ -120,7 +120,7 @@ const Posts = observer(() => {
                   <Card.Title>{post.topic}</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
                       <img
-                        src={post.User.Profile?.photo ? profileStore.getProxiedImageUrl(post.User.Profile.photo) : base_photo}
+                        src={userPhoto ? profileStore.getProxiedImageUrl(userPhoto) : base_photo}
                         alt="Аватар"
                         width={25}
                         height={25}
