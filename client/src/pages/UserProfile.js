@@ -67,7 +67,7 @@ const UserProfile = observer(() => {
                         width={180}
                         height={180}
                         alt="Profile"
-                        src={photo ? `${process.env.REACT_APP_API_URL}${photo}` : base_photo}
+                        src={photo ? profileStore.getProxiedImageUrl(photo) : base_photo}
                         style={{
                             borderRadius: '50%',
                             objectFit: 'cover',
