@@ -10,7 +10,7 @@ import { PaginationControls } from '../components/PaginationControls';
 import base_photo from '../images/base_photo.jpg'
 
 const Posts = observer(() => {
-  const { postStore, authStore, likeStore, searchStore } = useContext(Context);
+  const { postStore, authStore, likeStore, searchStore, profileStore } = useContext(Context);
   const navigate = useNavigate();
   const [loadingLikes, setLoadingLikes] = useState({});
   const { 
@@ -120,7 +120,7 @@ const Posts = observer(() => {
                   <Card.Title>{post.topic}</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
                       <img
-                        src={post.User.Profile?.photo ? `${process.env.REACT_APP_API_URL}${post.User.Profile.photo}` : base_photo}
+                        src={profileStore.photo ? profileStore.getProxiedImageUrl(profileStore.photo) : base_photo}
                         alt="Аватар"
                         width={25}
                         height={25}
