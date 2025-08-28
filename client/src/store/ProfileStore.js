@@ -200,4 +200,16 @@ export default class ProfileStore {
         this.setIsLoading(false);
     }
 }
+getProxiedImageUrl(originalUrl) {
+    if (!originalUrl) return '';
+    
+    // Если это уже прокси-ссылка или base64, возвращаем как есть
+    if (originalUrl.startsWith('data:') || originalUrl.includes('/api/images/')) {
+        return originalUrl;
+    }
+    
+    // Создаем прокси-ссылку через наш бэкенд
+    const encodedUrl = encodeURIComponent(originalUrl);
+    return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
+}
 }
