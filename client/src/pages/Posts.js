@@ -10,7 +10,7 @@ import { PaginationControls } from '../components/PaginationControls';
 import base_photo from '../images/base_photo.jpg'
 
 const Posts = observer(() => {
-  const { postStore, authStore, likeStore, searchStore, profileStore } = useContext(Context);
+  const { postStore, authStore, likeStore, searchStore } = useContext(Context);
   const navigate = useNavigate();
   const [loadingLikes, setLoadingLikes] = useState({});
   const { 
@@ -77,22 +77,6 @@ const Posts = observer(() => {
     e.stopPropagation();
     navigate(`${UserProfile_Route}/${userId}`);
   };
-  const getImageUrl = (photoUrl) => {
-    if (!photoUrl) return base_photo;
-    
-    // Используем метод из store или локальную реализацию
-    if (profileStore && typeof profileStore.getProxiedImageUrl === 'function') {
-      return profileStore.getProxiedImageUrl(photoUrl);
-    }
-    
-    // Альтернативная реализация, если метод недоступен в store
-    if (photoUrl.startsWith('data:') || photoUrl.includes('/api/images/')) {
-      return photoUrl;
-    }
-    
-    const encodedUrl = encodeURIComponent(photoUrl);
-    return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
-  };
   // Условный рендеринг должен быть после всех хуков
   if (postStore.loading) {
     return (
@@ -128,7 +112,7 @@ const Posts = observer(() => {
           const isLiked = authStore.isAuth && 
             likeStore.postLikes.some(like => like.postId === post.id);
           const isLoading = loadingLikes[post.id];
-          const userPhoto = post.User.Profile?.photo;
+
           return (
             <Col md={6} lg={12} className="mb-4" key={post.id}>
               <Card>
@@ -136,7 +120,7 @@ const Posts = observer(() => {
                   <Card.Title>{post.topic}</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
                       <img
-                        src={getImageUrl(userPhoto)}
+                        src={post.User.Profile?.photo ? `${process.env.REACT_APP_API_URL}${post.User.Profile.photo}` : base_photo}
                         alt="Аватар"
                         width={25}
                         height={25}
