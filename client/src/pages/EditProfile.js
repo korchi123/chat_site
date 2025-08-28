@@ -91,6 +91,13 @@ const EditProfile = observer(() => {
             setBirthDateError('Ошибка при сохранении даты');
         }
     };
+    const getProxiedImageUrl = (originalUrl) => {
+    if (!originalUrl) return base_photo;
+    
+    // Кодируем URL для передачи в query параметре
+    const encodedUrl = encodeURIComponent(originalUrl);
+    return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
+};
 
     return (
         <Container>
@@ -110,7 +117,7 @@ const EditProfile = observer(() => {
                             width={180}
                             height={180}
                             alt="Profile photo"
-                            src={profileStore.photo ? profileStore.photo : base_photo}
+                            src={getProxiedImageUrl(profileStore.photo)}
                             className="profile-image"
                             onError={(e) => {
                                 e.target.src = base_photo;
