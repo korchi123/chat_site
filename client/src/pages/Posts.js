@@ -10,7 +10,7 @@ import { PaginationControls } from '../components/PaginationControls';
 import base_photo from '../images/base_photo.jpg'
 
 const Posts = observer(() => {
-  const { postStore, authStore, likeStore, searchStore } = useContext(Context);
+  const { postStore, authStore, likeStore, searchStore, userStore } = useContext(Context);
   const navigate = useNavigate();
   const [loadingLikes, setLoadingLikes] = useState({});
   const { 
@@ -19,8 +19,6 @@ const Posts = observer(() => {
     handlePageChange, 
     setTotalCount 
   } = usePagination();
-
-  // Все хуки должны быть в начале компонента, до любых условных операторов
 
   // Загрузка постов при изменении страницы или поискового запроса
   useEffect(() => {
@@ -38,7 +36,8 @@ const Posts = observer(() => {
     };
     
     loadPosts();
-}, [page, postStore, setTotalCount, searchStore.searchQuery]);
+  }, [page, postStore, setTotalCount, searchStore.searchQuery]);
+
   // Загрузка лайков при авторизации
   useEffect(() => {
     if (authStore.isAuth) {
@@ -72,11 +71,13 @@ const Posts = observer(() => {
       setLoadingLikes(prev => ({ ...prev, [postId]: false }));
     }
   };
+
   const handleProfileClick = (userId, e) => {
     e.preventDefault();
     e.stopPropagation();
     navigate(`${UserProfile_Route}/${userId}`);
   };
+
   const getImageUrl = (photoUrl) => {
     if (!photoUrl) return base_photo;
     
@@ -93,6 +94,7 @@ const Posts = observer(() => {
     const encodedUrl = encodeURIComponent(photoUrl);
     return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
   };
+
   // Условный рендеринг должен быть после всех хуков
   if (postStore.loading) {
     return (
@@ -128,6 +130,7 @@ const Posts = observer(() => {
           const isLiked = authStore.isAuth && 
             likeStore.postLikes.some(like => like.postId === post.id);
           const isLoading = loadingLikes[post.id];
+          const userPhoto = post.User.Profile?.photo; // Определяем userPhoto здесь
 
           return (
             <Col md={6} lg={12} className="mb-4" key={post.id}>
@@ -136,7 +139,7 @@ const Posts = observer(() => {
                   <Card.Title>{post.topic}</Card.Title>
                   <Card.Subtitle className="mb-2 text-muted d-flex align-items-center">
                       <img
-                        src={getImageUrl(userPhoto)}
+                        src={getImageUrl(userPhoto)} // Используем userPhoto
                         alt="Аватар"
                         width={25}
                         height={25}
