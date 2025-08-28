@@ -10,7 +10,7 @@ import { PaginationControls } from '../components/PaginationControls';
 import base_photo from '../images/base_photo.jpg'
 
 const Posts = observer(() => {
-  const { postStore, authStore, likeStore, searchStore,  } = useContext(Context);
+  const { postStore, authStore, likeStore, searchStore, profileStore } = useContext(Context);
   const navigate = useNavigate();
   const [loadingLikes, setLoadingLikes] = useState({});
   const { 
