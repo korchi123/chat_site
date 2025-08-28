@@ -203,13 +203,18 @@ export default class ProfileStore {
     getProxiedImageUrl(originalUrl) {
         if (!originalUrl) return '';
         
+        // Если это уже полный URL (начинается с http), возвращаем как есть
+        if (originalUrl.startsWith('http://') || originalUrl.startsWith('https://')) {
+            return originalUrl;
+        }
+        
         // Если это уже прокси-ссылка или base64, возвращаем как есть
         if (originalUrl.startsWith('data:') || originalUrl.includes('/api/images/')) {
             return originalUrl;
         }
         
-        // Создаем прокси-ссылку через наш бэкенд
+        // Создаем прокси-ссылку через наш бэкенд только для относительных путей
         const encodedUrl = encodeURIComponent(originalUrl);
         return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
-    }
+}
 }
