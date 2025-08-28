@@ -200,7 +200,7 @@ export default class ProfileStore {
         this.setIsLoading(false);
     }
 }
-    async getProxiedImageUrl(originalUrl) {
+    getProxiedImageUrl(originalUrl) {
         if (!originalUrl) return '';
         
         // Если это уже прокси-ссылка или base64, возвращаем как есть
