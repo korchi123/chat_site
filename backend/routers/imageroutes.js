@@ -14,11 +14,24 @@ router.get('/yandex-proxy', async (req, res) => {
 
         const decodedUrl = decodeURIComponent(imageUrl);
         
-        // Просто редиректим на оригинальный URL
-        return res.redirect(decodedUrl);
-        
+        const response = await fetch(decodedUrl, {
+            headers: {
+                'Authorization': `OAuth ${process.env.YANDEX_DISK_ACCESS_TOKEN}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Yandex response: ${response.status}`);
+        }
+
+        // Устанавливаем правильные заголовки
+        res.setHeader('Content-Type', response.headers.get('content-type'));
+        res.setHeader('Cache-Control', 'public, max-age=86400');
+
+        // Передаем поток данных
+        response.body.pipe(res);
     } catch (error) {
-        console.error('Error in yandex-proxy:', error);
+        console.error('Error proxying image:', error);
         res.status(500).json({ error: 'Failed to load image' });
     }
 });
