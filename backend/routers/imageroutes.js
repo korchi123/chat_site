@@ -26,7 +26,7 @@ router.get('/yandex-proxy', async (req, res) => {
 
         // Устанавливаем правильные заголовки
         res.setHeader('Content-Type', response.headers.get('content-type'));
-        res.setHeader('Cache-Control', 'public, max-age=3600');
+        res.setHeader('Cache-Control', 'public, max-age=86400');
 
         // Передаем поток данных
         response.body.pipe(res);
