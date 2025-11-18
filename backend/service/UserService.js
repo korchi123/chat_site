@@ -56,7 +56,7 @@ class UserService {
     const userDto = new user_dto(candidate);
         const tokens = TokenService.generateToken({ ...userDto });
         await TokenService.saveToken(userDto.id, tokens.refreshToken); // Передаем userDto.id как userId
-        return { ...tokens, candidate: userDto };
+        return { ...tokens, user: userDto };
   }
 
   async logout(refreshToken){
