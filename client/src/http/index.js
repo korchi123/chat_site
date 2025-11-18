@@ -30,7 +30,7 @@ $authHost.interceptors.response.use(
       
       try {
         // Пытаемся обновить токены
-        const response = await axios.get(`${API_URL}/user/refresh`, {
+        const response = await $host.get(`${API_URL}/user/refresh`, {
           withCredentials: true
         });
         

@@ -10,7 +10,7 @@ export default class ProfileStore {
         this._isLoading = false;
         this._isSavingBio = false;
         this._isSavingBirthDate = false;
-        this._userProfile=null
+        this._userProfile = null;
         makeAutoObservable(this);
     }
 
@@ -39,8 +39,8 @@ export default class ProfileStore {
         return this._isSavingBirthDate;
     }
 
-    get userProfile(){
-        return this._userProfile
+    get userProfile() {
+        return this._userProfile;
     }
 
     // Сеттеры
@@ -68,8 +68,33 @@ export default class ProfileStore {
         this._isSavingBirthDate = saving;
     }
 
-    setUserProfile(userProfile){
-        this._userProfile=userProfile
+    setUserProfile(userProfile) {
+        this._userProfile = userProfile;
+    }
+
+    // Метод для получения проксированного URL изображения
+    getProxiedImageUrl(originalUrl) {
+        if (!originalUrl) return '';
+        
+        // Если это URL Яндекс.Диска, используем прокси
+        if (originalUrl.includes('disk.yandex.ru') || originalUrl.includes('yadi.sk')) {
+            const encodedUrl = encodeURIComponent(originalUrl);
+            return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
+        }
+        
+        // Если это уже полный URL (http/https), возвращаем как есть
+        if (originalUrl.startsWith('http://') || originalUrl.startsWith('https://')) {
+            return originalUrl;
+        }
+        
+        // Для base64 и относительных путей
+        if (originalUrl.startsWith('data:') || originalUrl.includes('/api/images/')) {
+            return originalUrl;
+        }
+        
+        // По умолчанию используем прокси
+        const encodedUrl = encodeURIComponent(originalUrl);
+        return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
     }
 
     // Методы для работы с API
@@ -162,66 +187,41 @@ export default class ProfileStore {
             this.setIsLoading(false);
         }
     }
-    async loadUserProfile(userId) {
-        
-    // 1. Проверка входных параметров
-    const parsedUserId = Number(userId);
-    if (isNaN(parsedUserId)) {
-        console.error('Invalid user ID:', userId);
-        this.setUserProfile(null);
-        return;
-    }
 
-    this.setIsLoading(true);
-    this.setUserProfile(null); // Сбрасываем перед загрузкой
-    
-    try {
-        //await new Promise(resolve => setTimeout(resolve, 1500));
-        const { data } = await $authHost.get(`/profile/user/${parsedUserId}`);
-        
-        // 2. Проверка ответа сервера
-        if (!data) {
-            throw new Error('Empty response from server');
+    async loadUserProfile(userId) {
+        // 1. Проверка входных параметров
+        const parsedUserId = Number(userId);
+        if (isNaN(parsedUserId)) {
+            console.error('Invalid user ID:', userId);
+            this.setUserProfile(null);
+            return;
         }
+
+        this.setIsLoading(true);
+        this.setUserProfile(null); // Сбрасываем перед загрузкой
         
-        this.setUserProfile({
-            id: data.id,
-            nickname: data.nickname || 'Неизвестный',
-            birthDate: data.birthDate || null,
-            bio: data.bio || null,
-            photo: data.photo || null
-        });
-        
-    } catch (error) {
-        console.error('Ошибка загрузки профиля пользователя:', error);
-        this.setUserProfile(null);
-        toast.error('Не удалось загрузить профиль пользователя');
-    } finally {
-        this.setIsLoading(false);
+        try {
+            const { data } = await $authHost.get(`/profile/user/${parsedUserId}`);
+            
+            // 2. Проверка ответа сервера
+            if (!data) {
+                throw new Error('Empty response from server');
+            }
+            
+            this.setUserProfile({
+                id: data.id,
+                nickname: data.nickname || 'Неизвестный',
+                birthDate: data.birthDate || null,
+                bio: data.bio || null,
+                photo: data.photo || null
+            });
+            
+        } catch (error) {
+            console.error('Ошибка загрузки профиля пользователя:', error);
+            this.setUserProfile(null);
+            toast.error('Не удалось загрузить профиль пользователя');
+        } finally {
+            this.setIsLoading(false);
+        }
     }
-}
-    // ProfileStore.js
-getProxiedImageUrl(originalUrl) {
-    if (!originalUrl) return '';
-    
-    // Если это URL Яндекс.Диска, используем прокси
-    if (originalUrl.includes('disk.yandex.ru') || originalUrl.includes('yadi.sk')) {
-        const encodedUrl = encodeURIComponent(originalUrl);
-        return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
-    }
-    
-    // Если это уже полный URL (http/https), возвращаем как есть
-    if (originalUrl.startsWith('http://') || originalUrl.startsWith('https://')) {
-        return originalUrl;
-    }
-    
-    // Для base64 и относительных путей
-    if (originalUrl.startsWith('data:') || originalUrl.includes('/api/images/')) {
-        return originalUrl;
-    }
-    
-    // По умолчанию используем прокси
-    const encodedUrl = encodeURIComponent(originalUrl);
-    return `${process.env.REACT_APP_API_URL}/api/images/yandex-proxy?imageUrl=${encodedUrl}`;
-}
 }
