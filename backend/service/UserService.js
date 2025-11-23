@@ -1,7 +1,7 @@
 import Usermodel from "../models/UserModel.js";
 import TokenModel from "../models/TokenModel.js";
 import ProfileModel from "../models/Profile.js";
-import { Op } from 'sequelize'; // Добавьте этот импорт в начале файла
+import { Op } from 'sequelize'; 
 import bcrypt from 'bcrypt'
 import TokenService from "./TokenService.js";
 import user_dto from "../dtos/user_dto.js";
@@ -29,7 +29,7 @@ class UserService {
     const profile = await Profile.create({ userId: user.id })
     await MailService.sendActivationMail(
   email, 
-  `${process.env.API_URL}/api/user/activate/${activationLink}` // Уберите # из ссылки
+  `${process.env.API_URL}/api/user/activate/${activationLink}` 
 );
     const userDto = new user_dto(user);
     const tokens = TokenService.generateToken({ ...userDto });
