@@ -26,6 +26,7 @@
     "path-to-regexp": "^8.2.0",
     "pg": "^8.16.2",
     "pg-hstore": "^2.3.4",
+    "resend": "^6.6.0",
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
